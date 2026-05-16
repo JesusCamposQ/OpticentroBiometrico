@@ -33,6 +33,8 @@
             this.btnLoadEmployees = new System.Windows.Forms.Button();
             this.lblSelectedEmployee = new System.Windows.Forms.Label();
             this.btnStartEnrollment = new System.Windows.Forms.Button();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmployees)).BeginInit();
             this.SuspendLayout();
             // 
@@ -85,17 +87,39 @@
             this.btnStartEnrollment.TabIndex = 4;
             this.btnStartEnrollment.Text = "Iniciar enrolamiento";
             this.btnStartEnrollment.UseVisualStyleBackColor = true;
-            // 
+            this.btnStartEnrollment.Click += new System.EventHandler(this.btnStartEnrollment_Click);
+            //
+            // lblStatus
+            //
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus.Location = new System.Drawing.Point(32, 530);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(0, 23);
+            this.lblStatus.TabIndex = 5;
+            //
+            // progressBar
+            //
+            this.progressBar.Location = new System.Drawing.Point(32, 563);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(400, 23);
+            this.progressBar.TabIndex = 6;
+            this.progressBar.Maximum = 3;
+            this.progressBar.Value = 0;
+            //
             // FrmBiometricEnrollment
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1181, 681);
+            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnStartEnrollment);
             this.Controls.Add(this.lblSelectedEmployee);
             this.Controls.Add(this.btnLoadEmployees);
             this.Controls.Add(this.dgvEmployees);
             this.Controls.Add(this.btnConnectDevice);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBiometricEnrollment_FormClosing);
             this.Name = "FrmBiometricEnrollment";
             this.Text = "Opticentro Biométrico";
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmployees)).EndInit();
@@ -111,6 +135,8 @@
         private System.Windows.Forms.Button btnLoadEmployees;
         private System.Windows.Forms.Label lblSelectedEmployee;
         private System.Windows.Forms.Button btnStartEnrollment;
+        private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

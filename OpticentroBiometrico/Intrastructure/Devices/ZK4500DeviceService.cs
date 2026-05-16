@@ -1,9 +1,5 @@
-﻿using libzkfpcsharp;
+using libzkfpcsharp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpticentroBiometrico.Intrastructure.Devices
 {
@@ -12,6 +8,9 @@ namespace OpticentroBiometrico.Intrastructure.Devices
         private zkfp _zkfp;
         private IntPtr _deviceHandle = IntPtr.Zero;
         private IntPtr _dbHandle = IntPtr.Zero;
+        private bool _initialized = false;
+
+        public IntPtr DeviceHandle => _deviceHandle;
 
         public bool ConnectDevice()
         {
@@ -22,6 +21,7 @@ namespace OpticentroBiometrico.Intrastructure.Devices
             if (result != zkfp.ZKFP_ERR_OK)
                 return false;
 
+            _initialized = true;
             _deviceHandle = zkfp2.OpenDevice(0);
 
             if (_deviceHandle == IntPtr.Zero)
@@ -34,10 +34,23 @@ namespace OpticentroBiometrico.Intrastructure.Devices
 
         public void DisconnectDevice()
         {
-            if (_deviceHandle != IntPtr.Zero)
-                zkfp2.CloseDevice(_deviceHandle);
+            if (_dbHandle != IntPtr.Zero)
+            {
+                zkfp2.DBFree(_dbHandle);
+                _dbHandle = IntPtr.Zero;
+            }
 
-            zkfp2.Terminate();
+            if (_deviceHandle != IntPtr.Zero)
+            {
+                zkfp2.CloseDevice(_deviceHandle);
+                _deviceHandle = IntPtr.Zero;
+            }
+
+            if (_initialized)
+            {
+                zkfp2.Terminate();
+                _initialized = false;
+            }
         }
     }
 }

@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,8 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libzkfpcsharp">
-      <HintPath>Libraries\libzkfpcsharp.dll</HintPath>
+    <Reference Include="libzkfpcsharp, Version=1.0.0.1, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\x64\libzkfpcsharp.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Bson">
       <HintPath>Libraries\MongoDB.Bson.dll</HintPath>
@@ -60,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application\Services\EmployeeService.cs" />
+    <Compile Include="Application\Services\FingerprintEnrollmentService.cs" />
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Domain\Models\Employee.cs" />
     <Compile Include="FrmBiometricEnrollment.cs">
@@ -71,6 +73,7 @@
     <Compile Include="Intrastructure\Data\EmployeeRepository.cs" />
     <Compile Include="Intrastructure\Data\MongoConnection.cs" />
     <Compile Include="Intrastructure\Devices\ZK4500DeviceService.cs" />
+    <Compile Include="Intrastructure\Repositories\FingerprintRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmBiometricEnrollment.resx">

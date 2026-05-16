@@ -1,6 +1,6 @@
 # OpticentroBiometrico
 
-Aplicación de escritorio para el registro biométrico de empleados de Opticentro. Permite conectar el lector de huellas ZK4500 y consultar la lista de empleados desde la base de datos MongoDB.
+Aplicación de escritorio para el registro biométrico de empleados de Opticentro. Permite conectar el lector de huellas ZK4500, seleccionar un empleado desde la base de datos MongoDB y capturar su huella dactilar generando un template biométrico que queda almacenado asociado al empleado.
 
 ## Requisitos previos
 
@@ -39,7 +39,7 @@ Editar el archivo `OpticentroBiometrico/App.config` con los datos de conexión a
 
 ### Estructura esperada en MongoDB
 
-La colección utilizada es `users`. Cada documento debe tener la siguiente estructura:
+La colección utilizada es `users`. Cada documento debe tener la siguiente estructura mínima:
 
 ```json
 {
@@ -47,12 +47,13 @@ La colección utilizada es `users`. Cada documento debe tener la siguiente estru
   "nombre": "Juan",
   "ap_paterno": "Pérez",
   "ap_materno": "López",
-  "ci": "12345678",
-  "isActive": true
+  "isActive": true,
+  "huella": null
 }
 ```
 
-Solo se muestran en la aplicación los empleados donde `isActive` sea `true`.
+- Solo se muestran empleados donde `isActive` sea `true`.
+- El campo `huella` se crea o actualiza al registrar la huella del empleado (base64).
 
 ## Compilación y ejecución
 
@@ -69,20 +70,45 @@ OpticentroBiometrico\bin\Debug\OpticentroBiometrico.exe
 
 ## Uso de la aplicación
 
-1. **Conectar dispositivo** — Pulsar el botón "Conectar dispositivo". Se mostrará un mensaje de éxito o error.
-2. **Cargar empleados** — Pulsar el botón "Cargar empleados". La lista se cargará desde MongoDB.
-3. **Seleccionar empleado** — Hacer clic sobre un empleado en la tabla para seleccionarlo.
-4. El botón "Iniciar enrolamiento" se habilitará al seleccionar un empleado (flujo preparado para futuras historias).
+### Flujo principal de enrolamiento
+
+1. **Conectar dispositivo** — Pulsar "Conectar dispositivo". Se mostrará confirmación de éxito o el mensaje de error correspondiente.
+2. **Cargar empleados** — Pulsar "Cargar empleados". La lista se carga desde MongoDB mostrando solo empleados activos.
+3. **Seleccionar empleado** — Hacer clic sobre un empleado en la tabla. El botón "Iniciar enrolamiento" se habilita al seleccionar.
+4. **Iniciar enrolamiento** — Pulsar "Iniciar enrolamiento". El proceso requiere **3 capturas consecutivas** del mismo dedo:
+   - La barra de progreso avanza una posición por cada captura aceptada.
+   - El indicador de estado guía al usuario en cada paso.
+   - Cada captura es validada por calidad (umbral mínimo: 60%). Las huellas con baja calidad son rechazadas con aviso para reintentar.
+   - Al completar las 3 capturas, el SDK genera un template fusionado (`DBMerge`) que se almacena en MongoDB en el campo `huella` del empleado.
+
+### Mensajes de estado
+
+| Mensaje | Significado |
+|---|---|
+| "Captura X de 3 — Coloque el dedo en el sensor..." | Esperando que el usuario apoye el dedo |
+| "Calidad baja (X%) — Retire y vuelva a colocar el dedo..." | Captura rechazada por baja calidad |
+| "Captura X aceptada (calidad: X%)" | Captura válida registrada |
+| "Capture X OK — Retire el dedo..." | Pausa entre capturas |
+| "Plantilla generada correctamente." | Merge exitoso, pendiente de guardado |
+| "Huella capturada y guardada correctamente." | Proceso completado |
+| "Error: el dispositivo parece haberse desconectado..." | Desconexión detectada durante la captura |
+| "Captura X fallida. Tiempo agotado." | No se detectó huella en el tiempo máximo |
+
+## Comportamiento ante errores del dispositivo
+
+- Si el lector se **desconecta durante la captura**, el sistema detecta 5 errores consecutivos del SDK, aborta el proceso, notifica al usuario y registra el incidente en el log.
+- Si el lector **no está conectado** al pulsar "Iniciar enrolamiento", se bloquea la operación con aviso inmediato.
+- La liberación del dispositivo (`DBFree → CloseDevice → Terminate`) se ejecuta siempre al cerrar la aplicación, garantizando que el lector no quede bloqueado.
 
 ## Logs
 
-Los errores de conexión y operación se registran automáticamente en el archivo:
+Los errores de conexión, operación del SDK y almacenamiento se registran automáticamente en:
 
 ```
 log.txt
 ```
 
-El archivo se genera en el mismo directorio del ejecutable y se actualiza de forma acumulativa con fecha y hora en cada entrada.
+El archivo se genera en el mismo directorio del ejecutable y se actualiza de forma acumulativa con fecha y hora en cada entrada. Incluye códigos de retorno del SDK para facilitar el diagnóstico.
 
 ## Estructura del proyecto
 
@@ -90,31 +116,34 @@ El archivo se genera en el mismo directorio del ejecutable y se actualiza de for
 OpticentroBiometrico/
 ├── Application/
 │   └── Services/
-│       └── EmployeeService.cs       # Capa de servicios
+│       ├── EmployeeService.cs              # Carga y consulta de empleados
+│       └── FingerprintEnrollmentService.cs # Captura, validación y generación de template
 ├── Common/
-│   └── Logger.cs                    # Registro de errores
+│   └── Logger.cs                           # Registro de errores en log.txt
 ├── Domain/
 │   └── Models/
-│       └── Employee.cs              # Modelo de empleado
+│       └── Employee.cs                     # Modelo de empleado
 ├── Intrastructure/
 │   ├── Data/
-│   │   ├── MongoConnection.cs       # Conexión a MongoDB
-│   │   └── EmployeeRepository.cs   # Acceso a datos
-│   └── Devices/
-│       └── ZK4500DeviceService.cs  # Integración con ZK4500
+│   │   ├── MongoConnection.cs              # Conexión a MongoDB
+│   │   └── EmployeeRepository.cs          # Consulta de empleados
+│   ├── Devices/
+│   │   └── ZK4500DeviceService.cs         # Ciclo de vida del dispositivo ZK4500
+│   └── Repositories/
+│       └── FingerprintRepository.cs       # Almacenamiento de templates en MongoDB
 ├── Libraries/
-│   ├── libzkfpcsharp.dll            # SDK ZKTeco
+│   ├── libzkfpcsharp.dll                   # SDK ZKTeco
 │   ├── MongoDB.Bson.dll
 │   ├── MongoDB.Driver.dll
 │   └── MongoDB.Driver.Core.dll
-├── FrmBiometricEnrollment.cs        # Formulario principal
-├── App.config                       # Configuración de conexión
-└── Program.cs                       # Punto de entrada
+├── FrmBiometricEnrollment.cs              # Formulario principal
+├── App.config                             # Configuración de conexión
+└── Program.cs                             # Punto de entrada
 ```
 
 ## Fuera de alcance (versión actual)
 
-- Captura y registro de huella digital
-- Validación biométrica
-- Almacenamiento de templates de huella
-- Sincronización con backend
+- Validación biométrica 1:N (comparar huella contra la base completa)
+- Login biométrico
+- Sincronización con otros dispositivos ZKTeco
+- Registro de múltiples dedos por empleado
