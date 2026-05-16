@@ -25,5 +25,37 @@ namespace OpticentroBiometrico.Intrastructure.Repositories
             var update = Builders<BsonDocument>.Update.Set("huella", template);
             _usersCollection.UpdateOne(filter, update);
         }
+
+        public List<(string employeeId, byte[] template)> GetEmployeesWithTemplates()
+        {
+            var result = new List<(string, byte[])>();
+
+            var filter = Builders<BsonDocument>.Filter.And(
+                Builders<BsonDocument>.Filter.Eq("isActive", true),
+                Builders<BsonDocument>.Filter.Exists("huella", true),
+                Builders<BsonDocument>.Filter.Ne("huella", BsonNull.Value),
+                Builders<BsonDocument>.Filter.Ne("huella", BsonString.Empty)
+            );
+
+            var projection = Builders<BsonDocument>.Projection
+                .Include("_id")
+                .Include("huella");
+
+            var documents = _usersCollection.Find(filter).Project(projection).ToList();
+
+            foreach (var doc in documents)
+            {
+                string employeeId = doc["_id"].ToString();
+                string base64 = doc.GetValue("huella", "").AsString;
+
+                if (string.IsNullOrWhiteSpace(base64))
+                    continue;
+
+                byte[] templateBytes = Convert.FromBase64String(base64);
+                result.Add((employeeId, templateBytes));
+            }
+
+            return result;
+        }
     }
 }

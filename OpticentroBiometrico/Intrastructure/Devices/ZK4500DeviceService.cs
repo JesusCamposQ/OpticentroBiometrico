@@ -11,6 +11,7 @@ namespace OpticentroBiometrico.Intrastructure.Devices
         private bool _initialized = false;
 
         public IntPtr DeviceHandle => _deviceHandle;
+        public IntPtr DbHandle => _dbHandle;
 
         public bool ConnectDevice()
         {
