@@ -23,7 +23,11 @@ namespace OpticentroBiometrico.Intrastructure.Data
         {
             var employees = new List<Employee>();
 
-            var filter = Builders<BsonDocument>.Filter.Eq("isActive", true);
+            var filter = Builders<BsonDocument>.Filter.And(
+                Builders<BsonDocument>.Filter.Eq("isActive", true),
+                Builders<BsonDocument>.Filter.Exists("tipo",false)
+             );
+
             var documents = _usersCollection.Find(filter).ToList();
 
             foreach (var doc in documents)
