@@ -16,7 +16,7 @@ namespace OpticentroBiometrico
         {
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.Run(new FrmBiometricEnrollment());
+            System.Windows.Forms.Application.Run(new FrmMainMenu());
         }
     }
 }

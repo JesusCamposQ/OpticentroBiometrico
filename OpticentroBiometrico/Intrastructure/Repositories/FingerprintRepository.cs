@@ -1,11 +1,9 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using OpticentroBiometrico.Common;
 using OpticentroBiometrico.Intrastructure.Data;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpticentroBiometrico.Intrastructure.Repositories
 {
@@ -51,7 +49,17 @@ namespace OpticentroBiometrico.Intrastructure.Repositories
                 if (string.IsNullOrWhiteSpace(base64))
                     continue;
 
-                byte[] templateBytes = Convert.FromBase64String(base64);
+                byte[] templateBytes;
+                try
+                {
+                    templateBytes = Convert.FromBase64String(base64.Trim());
+                }
+                catch (FormatException ex)
+                {
+                    Logger.Log($"Template Base64 invalido para empleado {employeeId}: {ex.Message}");
+                    continue;
+                }
+
                 result.Add((employeeId, templateBytes));
             }
 

@@ -76,13 +76,27 @@
     <Compile Include="Application\Services\FingerprintEnrollmentService.cs" />
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Domain\Models\Employee.cs" />
+    <Compile Include="Application\Services\FingerprintVerificationService.cs" />
+    <Compile Include="FrmBiometricAttendance.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmBiometricAttendance.Designer.cs">
+      <DependentUpon>FrmBiometricAttendance.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmBiometricEnrollment.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmBiometricEnrollment.Designer.cs">
       <DependentUpon>FrmBiometricEnrollment.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmMainMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMainMenu.Designer.cs">
+      <DependentUpon>FrmMainMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="Intrastructure\Data\EmployeeRepository.cs" />
+    <Compile Include="Intrastructure\Repositories\MarcacionRepository.cs" />
     <Compile Include="Intrastructure\Data\MongoConnection.cs" />
     <Compile Include="Intrastructure\Devices\ZK4500DeviceService.cs" />
     <Compile Include="Intrastructure\Repositories\FingerprintRepository.cs" />

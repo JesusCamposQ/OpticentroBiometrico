@@ -25,7 +25,8 @@ namespace OpticentroBiometrico.Intrastructure.Data
 
             var filter = Builders<BsonDocument>.Filter.And(
                 Builders<BsonDocument>.Filter.Eq("isActive", true),
-                Builders<BsonDocument>.Filter.Exists("tipo",false)
+                Builders<BsonDocument>.Filter.Exists("tipo",false),
+                Builders<BsonDocument>.Filter.Ne("flag", "eliminado")
              );
 
             var documents = _usersCollection.Find(filter).ToList();

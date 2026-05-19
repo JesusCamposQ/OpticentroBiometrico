@@ -13,7 +13,7 @@ namespace OpticentroBiometrico.Intrastructure.Repositories
         public MarcacionRepository()
         {
             var database = new MongoConnection().GetDatabase();
-            _marcacionesCollection = database.GetCollection<BsonDocument>("marcaciones");
+            _marcacionesCollection = database.GetCollection<BsonDocument>("Marcacion");
         }
 
         public bool SaveMarcacion(string employeeId)
@@ -35,6 +35,38 @@ namespace OpticentroBiometrico.Intrastructure.Repositories
             {
                 Logger.Log($"Error al guardar marcación para empleado {employeeId}: {ex.Message}");
                 return false;
+            }
+        }
+
+        public BsonDocument GetLastMarcacion(string employeeId)
+        {
+            try
+            {
+                var objectId = ObjectId.Parse(employeeId);
+                var filter = Builders<BsonDocument>.Filter.Eq("user", objectId);
+                var sort = Builders<BsonDocument>.Sort.Descending("fecha");
+
+                var last = _marcacionesCollection.Find(filter)
+                                                 .Sort(sort)
+                                                 .Limit(1)
+                                                 .FirstOrDefault();
+
+                if (last == null)
+                {
+                    Logger.Log($"No se encontró ninguna marcación para el empleado {employeeId}");
+                }
+
+                return last;
+            }
+            catch (FormatException fe)
+            {
+                Logger.Log($"ID de empleado inválido {employeeId}: {fe.Message}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error al recuperar última marcación para empleado {employeeId}: {ex.Message}");
+                return null;
             }
         }
     }
