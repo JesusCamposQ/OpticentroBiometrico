@@ -23,6 +23,7 @@ namespace OpticentroBiometrico
 
         private readonly Dictionary<string, string> _employeeNames = new Dictionary<string, string>();
         private CancellationTokenSource _cts;
+        private Task _captureTask;
         private System.Windows.Forms.Timer _clockTimer;
 
         // Color fade animation
@@ -87,7 +88,7 @@ namespace OpticentroBiometrico
             Logger.Log($"FrmBiometricAttendance listo. Templates cargados: {loaded}");
 
             _cts = new CancellationTokenSource();
-            Task.Factory.StartNew(
+            _captureTask = Task.Factory.StartNew(
                 () => CaptureLoop(_cts.Token),
                 _cts.Token,
                 TaskCreationOptions.LongRunning,

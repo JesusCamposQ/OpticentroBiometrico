@@ -39,6 +39,7 @@
             this.dgvEmployees = new MaterialSkin.Controls.MaterialListView();
             this.colCI = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colFullName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colUsername = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.materialCard2 = new MaterialSkin.Controls.MaterialCard();
             this.materialCard1.SuspendLayout();
             this.materialCard2.SuspendLayout();
@@ -176,7 +177,8 @@
             this.dgvEmployees.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvEmployees.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colCI,
-            this.colFullName});
+            this.colFullName,
+            this.colUsername});
             this.dgvEmployees.Depth = 0;
             this.dgvEmployees.FullRowSelect = true;
             this.dgvEmployees.HideSelection = false;
@@ -195,12 +197,17 @@
             // colCI
             // 
             this.colCI.Text = "CI";
-            this.colCI.Width = 150;
-            // 
+            this.colCI.Width = 120;
+            //
             // colFullName
-            // 
+            //
             this.colFullName.Text = "Nombre Completo";
-            this.colFullName.Width = 440;
+            this.colFullName.Width = 390;
+            //
+            // colUsername
+            //
+            this.colUsername.Text = "Usuario";
+            this.colUsername.Width = 160;
             // 
             // materialCard2
             // 
@@ -249,6 +256,7 @@
         private MaterialSkin.Controls.MaterialListView dgvEmployees;
         private System.Windows.Forms.ColumnHeader colCI;
         private System.Windows.Forms.ColumnHeader colFullName;
+        private System.Windows.Forms.ColumnHeader colUsername;
         private MaterialSkin.Controls.MaterialTextBox txtFilterEmployee;
     }
 }

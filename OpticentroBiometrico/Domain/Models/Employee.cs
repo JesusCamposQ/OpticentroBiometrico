@@ -12,6 +12,7 @@ namespace OpticentroBiometrico.Domain.Models
         public string Nombre { get; set; }
         public string ApPaterno { get; set; }
         public string ApMaterno { get; set; }
+        public string Username { get; set; }
         public string Ci { get; set; }
         public bool IsActive { get; set; }
 

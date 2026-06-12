@@ -40,6 +40,7 @@ namespace OpticentroBiometrico.Intrastructure.Data
                     ApPaterno = doc.GetValue("ap_paterno", "").ToString(),
                     ApMaterno = doc.GetValue("ap_materno", "").ToString(),
                     Ci = doc.GetValue("ci", "").ToString(),
+                    Username = doc.GetValue("username", "").ToString(),
                     IsActive = doc.GetValue("isActive", false).AsBoolean
                 });
             }

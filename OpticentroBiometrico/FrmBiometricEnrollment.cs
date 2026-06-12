@@ -69,8 +69,9 @@ namespace OpticentroBiometrico
             dgvEmployees.View = View.Details;
             if (dgvEmployees.Columns.Count == 0)
             {
-                dgvEmployees.Columns.Add("CI", "CI", 150);
-                dgvEmployees.Columns.Add("FullName", "Nombre Completo", 440);
+                dgvEmployees.Columns.Add("CI", "CI", 120);
+                dgvEmployees.Columns.Add("FullName", "Nombre Completo", 390);
+                dgvEmployees.Columns.Add("Username", "Usuario", 160);
             }
 
             // Resetear selección previa y caché de búsqueda.
@@ -114,6 +115,7 @@ namespace OpticentroBiometrico
 
                     var item = new ListViewItem(emp.Ci.ToString());
                     item.SubItems.Add(emp.FullName ?? string.Empty);
+                    item.SubItems.Add(emp.Username ?? string.Empty);
                     item.Tag = id;
                     _allEmployeeItems.Add(item);
                     dgvEmployees.Items.Add(item);
@@ -163,9 +165,11 @@ namespace OpticentroBiometrico
                 {
                     string ci       = item.SubItems.Count > 0 ? item.SubItems[0].Text : string.Empty;
                     string fullName = item.SubItems.Count > 1 ? item.SubItems[1].Text : string.Empty;
+                    string username = item.SubItems.Count > 2 ? item.SubItems[2].Text : string.Empty;
 
                     if (ci.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                        fullName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
+                        fullName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        username.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         dgvEmployees.Items.Add(item);
                     }
@@ -183,6 +187,7 @@ namespace OpticentroBiometrico
             {
                 var item = new ListViewItem("─────────");
                 item.SubItems.Add("──────────────────────────");
+                item.SubItems.Add("──────────────");
                 item.ForeColor = System.Drawing.Color.FromArgb(210, 210, 210);
                 item.Tag = null; // Tag nulo identifica filas skeleton.
                 dgvEmployees.Items.Add(item);
